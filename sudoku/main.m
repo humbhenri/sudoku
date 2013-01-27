@@ -12,17 +12,18 @@
 
 // progress bar
 static inline void load_bar(int step, int total_steps, int resolution, int width) {
+    if (total_steps/resolution == 0) return; // avoid a division by zero below
     if (step % (total_steps/resolution) != 0) return;
     float ratio = step/(float)total_steps;
     int count = ratio * width;
-    printf("\033[2K%3d%% [", (int)(ratio*100));
+    printf("%3d%% [", (int)(ratio*100));
     
     // Show the load bar.
     for (int x=0; x<count; x++)
         printf("=");
-    for (int x=count; x<width; x++)
+    for (int x=count; x<width; ++x)
         printf(" ");
-    printf("]");
+    printf("]\r");
     fflush(stdout);
 }
 
@@ -158,7 +159,7 @@ int main(int argc, const char * argv[])
         [results writeToFile:output atomically:NO encoding:NSASCIIStringEncoding error:nil];
 
         // present results
-        NSLog(@"-- Elapsed: %f s\n", elapsed);
+        NSLog(@"-- Elapsed: %f s\n", -elapsed);
     }
     return 0;
 }
